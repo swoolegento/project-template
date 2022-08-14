@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+## Enable / disable YASD
+##
+## usage `fin yasd`
+
+dir=`pwd`
+if [ -s "${dir}/.docksal/docksal-local.env" ]; then
+ enabled=`fin config get --env=local SWOOLE_YASD_ENABLE`
+fi
+
+if [ -z $enabled ] || [ $enabled != "\"1\"" ]; then
+  fin config set --env=local SWOOLE_YASD_ENABLE=1 >/dev/null 2>&1 \
+    && fin restart cli \
+    && echo '========= YASD was enabled ========='
+else
+  fin config set --env=local SWOOLE_YASD_ENABLE=0 >/dev/null 2>&1 \
+    && fin restart cli \
+    && echo '========= YASD was disabled ========='
+fi

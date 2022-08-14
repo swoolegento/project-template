@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  cli:
+    hostname: cli
+    image: ${CLI_IMAGE}
+    volumes:
+      - ${PROJECT_ROOT}/src:/var/www/html:rw,nocopy,cached
+      - docksal_ssh_agent:/.ssh-agent:ro
+      - ${SSH_AUTH_SOCK_DIR}:${SSH_AUTH_SOCK_DIR}:ro
+      - cli_home:/home/docker
+    labels:
+      - io.docksal.user=docker
+      - io.docksal.virtual-host=${VIRTUAL_HOST},*.${VIRTUAL_HOST},${VIRTUAL_HOST}.*
+      - io.docksal.virtual-port=3000
+      - io.docksal.project-root=${PROJECT_ROOT}
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      SWOOLE_YASD_ENABLE: ${SWOOLE_YASD_ENABLE}
+      SWOOLE_YASD_REMOTE_IP: ${DOCKSAL_HOST_IP}
+      PHP_IDE_CONFIG: serverName=web
+      PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
+      SWOOLEGENTO_REPO: ${SWOOLEGENTO_REPO}
+      MAGENTO_REPO: ${MAGENTO_REPO}
+      MAGENTO_REPO_USERNAME: ${MAGENTO_REPO_USERNAME}
+      MAGENTO_REPO_PASSWORD: ${MAGENTO_REPO_PASSWORD}
+      DB_HOST: ${DB_HOST:-db}
+      DB_NAME: ${DB_NAME:-default}
+      DB_USER: ${DB_USER:-user}
+      DB_PASSWORD: ${DB_PASSWORD:-user}
+      ELASTICSEARCH_HOST: ${ELASTICSEARCH_HOST:-elasticsearch}
+      ELASTICSEARCH_PORT: ${ELASTICSEARCH_PORT:-9200}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+  db:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: mariadb
+  redis:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: redis
+  elasticsearch:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: elasticsearch
+  mail:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: mail
