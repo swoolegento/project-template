@@ -3,9 +3,13 @@ version: "3.9"
 services:
   cli:
     hostname: cli
-    image: ${CLI_IMAGE}
+    build: ${PROJECT_ROOT}/.
     volumes:
       - ${PROJECT_ROOT}/src:/var/www/html:rw,nocopy,cached
+      #- /var/www/html/vendor/magento #uncomment when Magento is installed (change Dockerfile also)
+      #- /var/www/html/generated/code #uncomment when Magento is installed (change Dockerfile also)
+      #- /var/www/html/pub/static #uncomment when Magento is installed (change Dockerfile also)
+      #- /var/www/html/pub/media/catalog/product/cache #uncomment when Magento is installed (change Dockerfile also)
       - docksal_ssh_agent:/.ssh-agent:ro
       - ${SSH_AUTH_SOCK_DIR}:${SSH_AUTH_SOCK_DIR}:ro
       - cli_home:/home/docker
